@@ -1,18 +1,10 @@
+import { json } from "body-parser";
 import connection from "./mysql";
+import AbstractModel from "./AbstractModel";
 
-export interface Test {
-  number: number;
-  string: string;
+export class TestModel extends AbstractModel{
+  constructor (){
+    super();
+  }
 }
-
-export const getAllTest = (): Promise<Test[]> => {
-  return new Promise((resolve, reject) => {
-    connection.query('SELECT * FROM test', (err, results) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(results);
-      }
-    });
-  });
-};
+TestModel.setTableName("test");

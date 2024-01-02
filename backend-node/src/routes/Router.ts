@@ -1,8 +1,12 @@
 import express from 'express';
-import { getAllTestAPI } from "../controllers/TestController";
+import TestController from "../controllers/TestController";
 
 const router = express.Router();
 
-router.get('/test', getAllTestAPI);
+router.get('/test', TestController.getAllTestAPI);
+router.get('/test/id/:id', TestController.getTestByIdAPI);
+router.delete('/test/delete/:id', TestController.deleteTestByIdAPI);
+router.post('/test/create', TestController.createDataTestAPI);
+router.put('/test/update', TestController.updateDataTestAPI);
 
 export default router;

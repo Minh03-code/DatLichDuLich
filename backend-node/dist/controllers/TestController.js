@@ -8,16 +8,100 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getAllTestAPI = void 0;
 const TestModel_1 = require("../models/TestModel");
-const getAllTestAPI = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+class TestController {
+}
+_a = TestController;
+TestController.getAllTestAPI = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const test = yield (0, TestModel_1.getAllTest)();
-        res.json(test);
+        const data = yield TestModel_1.TestModel.all();
+        return res.send({
+            message: "Lấy dữ liệu thành công",
+            code: 200,
+            result: data
+        });
     }
     catch (error) {
-        res.status(500).json({ error: error });
+        console.error("Error:", error);
+        return res.status(500).send({
+            message: "Lỗi khi lấy dữ liệu",
+            code: 500,
+            error: error
+        });
     }
 });
-exports.getAllTestAPI = getAllTestAPI;
+TestController.getTestByIdAPI = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const data = yield TestModel_1.TestModel.get(["id"], [parseInt(req.params.id)]);
+        return res.send({
+            message: "Lấy dữ liệu thành công",
+            code: 200,
+            result: data
+        });
+    }
+    catch (error) {
+        console.error("Error:", error);
+        return res.status(500).send({
+            message: "Lỗi khi lấy dữ liệu",
+            code: 500,
+            error: error
+        });
+    }
+});
+TestController.deleteTestByIdAPI = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const data = yield TestModel_1.TestModel.delete(parseInt(req.params.id));
+        return res.send({
+            message: "Xóa thành công",
+            code: 200,
+            result: data
+        });
+    }
+    catch (error) {
+        console.error("Error:", error);
+        return res.status(500).send({
+            message: "Lỗi khi xóa dữ liệu",
+            code: 500,
+            error: error
+        });
+    }
+});
+TestController.createDataTestAPI = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const data = yield TestModel_1.TestModel.insert("string, number", [req.body.string, req.body.number]);
+        return res.send({
+            message: "Thêm thành công",
+            code: 200,
+            result: data
+        });
+    }
+    catch (error) {
+        console.error("Error:", error);
+        return res.status(500).send({
+            message: "Lỗi khi thêm dữ liệu",
+            code: 500,
+            error: error
+        });
+    }
+});
+TestController.updateDataTestAPI = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const data = yield TestModel_1.TestModel.update(["string", "number"], [req.body.string, req.body.number], ["id"], [req.body.id]);
+        return res.send({
+            message: "Cập nhập thành công",
+            code: 200,
+            result: data
+        });
+    }
+    catch (error) {
+        console.error("Error:", error);
+        return res.status(500).send({
+            message: "Lỗi khi cập nhập dữ liệu",
+            code: 500,
+            error: error
+        });
+    }
+});
+exports.default = TestController;

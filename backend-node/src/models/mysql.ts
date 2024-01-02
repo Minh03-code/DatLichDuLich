@@ -4,17 +4,17 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const connection = mysql.createConnection({
-  host: process.env.HOST || 'localhost',
-  user: process.env.USERNAME || 'root',
-  password: process.env.PASSWORD || '',
-  database: process.env.DATABASE || 'datlichdulich',
+  host: 'localhost',
+  user: 'root',
+  password: '',
+  database: 'datlichdulich',
 });
 
 connection.connect((err) => {
   if (err) {
-    console.error('Database connection failed: ', err.message);
+    console.error('Kết nối database thất bại: ', err.message);
   } else {
-    console.log('Connected to database');
+    console.log('Kết nối database thành công');
   }
 });
 
