@@ -3,7 +3,7 @@ import { TestModel } from '../models/TestModel';
 class TestController {
   static getAllTestAPI = async (req: Request, res: Response) => {
     try {
-      const data = await TestModel.all();
+      const data = await TestModel.layTatCa();
       return res.send({
         message: "Lấy dữ liệu thành công",
         code: 200,
@@ -21,7 +21,7 @@ class TestController {
   static getTestByIdAPI = async (req: Request, res: Response) => {
     try {
       const data = await TestModel.find(parseInt(req.params.id));
-      // const data = await TestModel.get(["id"], [parseInt(req.params.id)]); giống y trang câu trên
+      //const data = await TestModel.get(["id"], [parseInt(req.params.id)]); // giống y trang câu trên
       return res.send({
         message: "Lấy dữ liệu thành công",
         code: 200,
@@ -72,7 +72,7 @@ class TestController {
   };
   static updateDataTestAPI = async (req: Request, res: Response) => {
     try {
-      const data = await TestModel.update(["string", "number"], [req.body.string, req.body.number], ["id"], [req.body.id]);
+      const data = await TestModel.updateWhereAnd(["string", "number"], [req.body.string, req.body.number], ["id"], [req.body.id]);
       return res.send({
         message: "Cập nhập thành công",
         code: 200,

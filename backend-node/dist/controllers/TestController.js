@@ -16,7 +16,7 @@ class TestController {
 _a = TestController;
 TestController.getAllTestAPI = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const data = yield TestModel_1.TestModel.all();
+        const data = yield TestModel_1.TestModel.layTatCa();
         return res.send({
             message: "Lấy dữ liệu thành công",
             code: 200,
@@ -34,7 +34,8 @@ TestController.getAllTestAPI = (req, res) => __awaiter(void 0, void 0, void 0, f
 });
 TestController.getTestByIdAPI = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const data = yield TestModel_1.TestModel.get(["id"], [parseInt(req.params.id)]);
+        const data = yield TestModel_1.TestModel.find(parseInt(req.params.id));
+        //const data = await TestModel.get(["id"], [parseInt(req.params.id)]); // giống y trang câu trên
         return res.send({
             message: "Lấy dữ liệu thành công",
             code: 200,

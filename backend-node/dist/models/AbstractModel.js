@@ -4,15 +4,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
-// Không chỉnh sửa file này
-//Nhật ký viết code nghiên cứu viết các function lấy dữ liệu, điều kiện, thêm xóa sửa, tái sử dụng cho nhiều model khác nhau giống laravel nhân ngày 02/01/2003
-/*
-Tạo thêm created_at và updated_at
-ALTER TABLE "tên bảng"
-ADD COLUMN created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-ADD COLUMN updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
-
-*/
 const mysql_1 = __importDefault(require("./mysql"));
 class AbstractModel {
     // sét tên bảng cho từng model
@@ -24,6 +15,7 @@ _a = AbstractModel;
 //////////////////////////////////////////////////////////////////////////////////
 // 1 lấy dữ liệu
 //////////////////////////////////////////////////////////////////////////////////
+// 1.1 lấy tất cả dữ liệu của bảng
 AbstractModel.all = () => {
     return new Promise((resolve, reject) => {
         const sql = `SELECT * FROM ${_a.tableName}`;
@@ -39,6 +31,7 @@ AbstractModel.all = () => {
         });
     });
 };
+// 1.2 lấy dữ liệu theo id
 AbstractModel.find = (id) => {
     return new Promise((resolve, reject) => {
         const sql = `SELECT * FROM ${_a.tableName} WHERE id = ?`;
@@ -55,10 +48,12 @@ AbstractModel.find = (id) => {
         });
     });
 };
-AbstractModel.get = (sqlKeyCondition, sqlValueCondition) => {
-    const getWhere = _a.where(sqlKeyCondition);
+// 1.3 lấy dữ liệu theo điều kiện cụ thể (mảng điều kiện kiểu string, mảng dữ liệu điều kiện kiểu any)
+// NOTE: đây là hàm chưa được kiểm chứng nhưng khả năng đúng 100%
+AbstractModel.getAnd = (sqlKeyCondition, sqlValueCondition) => {
+    const getwhereAnd = _a.whereAnd(sqlKeyCondition);
     return new Promise((resolve, reject) => {
-        const sql = `SELECT * FROM ${_a.tableName} WHERE ${getWhere}`;
+        const sql = `SELECT * FROM ${_a.tableName} WHERE ${getwhereAnd}`;
         const query = mysql_1.default.query(sql, sqlValueCondition, (err, result) => {
             if (err) {
                 console.log("Xuất lỗi" + err);
@@ -74,6 +69,7 @@ AbstractModel.get = (sqlKeyCondition, sqlValueCondition) => {
 //////////////////////////////////////////////////////////////////////////////////
 // 2 xóa dữ liệu
 //////////////////////////////////////////////////////////////////////////////////
+// 2.1 Xóa dữ liệu theo id
 AbstractModel.delete = (id) => {
     return new Promise((resolve, reject) => {
         const sql = `DELETE FROM ${_a.tableName} WHERE id = ?`;
@@ -90,14 +86,33 @@ AbstractModel.delete = (id) => {
         });
     });
 };
+// 2.2 Xóa dữ liệu theo điều kiện cụ thể
+// NOTE: đây là hàm chưa được kiểm chứng nhưng khả năng đúng 100%
+AbstractModel.deleteCondition = (sqlKeyCondition, sqlValueCondition) => {
+    const deleteCondition = _a.whereAnd(sqlKeyCondition);
+    return new Promise((resolve, reject) => {
+        const sql = `DELETE FROM ${_a.tableName} WHERE ${deleteCondition}`;
+        const query = mysql_1.default.query(sql, sqlValueCondition, (err, result) => {
+            if (err) {
+                console.log("Xuất lỗi" + err);
+                reject(err);
+            }
+            else {
+                console.log(`Xóa thành công item trong bảng ${_a.tableName} theo điều kiện`);
+                resolve(result);
+            }
+        });
+    });
+};
 //////////////////////////////////////////////////////////////////////////////////
 // 3 thêm dữ liêu
 //////////////////////////////////////////////////////////////////////////////////
-AbstractModel.insert = (sqlKeyCondition, sqlValueCondition) => {
-    const questionMarks = sqlValueCondition.map(() => '?').join(',');
+// 3.1 Thêm dữ liệu
+AbstractModel.insert = (sqlKeyCreate, sqlValueCreate) => {
+    const questionMarks = sqlValueCreate.map(() => '?').join(',');
     return new Promise((resolve, reject) => {
-        const sql = `INSERT INTO ${_a.tableName} (${sqlKeyCondition}) VALUES (${questionMarks})`;
-        const query = mysql_1.default.query(sql, sqlValueCondition, (err, result) => {
+        const sql = `INSERT INTO ${_a.tableName} (${sqlKeyCreate}) VALUES (${questionMarks})`;
+        const query = mysql_1.default.query(sql, sqlValueCreate, (err, result) => {
             if (err) {
                 console.log("Xuất lỗi" + err);
                 reject(err);
@@ -112,12 +127,13 @@ AbstractModel.insert = (sqlKeyCondition, sqlValueCondition) => {
 //////////////////////////////////////////////////////////////////////////////////
 // 4 Cập nhật dữ liệu
 //////////////////////////////////////////////////////////////////////////////////
+// 4.1 Cập nhật dữ liệu
 AbstractModel.update = (sqlKeyUpdate, sqlValueUpdate, sqlKeyCondition, sqlValueCondition) => {
     const columnUpdates = sqlKeyUpdate.map(type => `${type}=?`).join(', '); // Ví dụ column1=?, column2=?
-    const updateWhere = _a.where(sqlKeyCondition);
+    const updatewhereAnd = _a.whereAnd(sqlKeyCondition);
     const valueQuestionMakes = sqlValueUpdate.concat(sqlValueCondition);
     return new Promise((resolve, reject) => {
-        const sql = `UPDATE ${_a.tableName} SET ${columnUpdates} WHERE ${updateWhere}`;
+        const sql = `UPDATE ${_a.tableName} SET ${columnUpdates} WHERE ${updatewhereAnd}`;
         const query = mysql_1.default.query(sql, valueQuestionMakes, (err, result) => {
             if (err) {
                 console.log("Xuất lỗi" + err);
@@ -133,8 +149,8 @@ AbstractModel.update = (sqlKeyUpdate, sqlValueUpdate, sqlKeyCondition, sqlValueC
 //////////////////////////////////////////////////////////////////////////////////
 // 5 Hàm hỗ trợ
 //////////////////////////////////////////////////////////////////////////////////
-AbstractModel.where = (sqlKeyCondition) => {
-    const updateWhere = sqlKeyCondition.map(type => `${type}=?`).join(', ');
-    return updateWhere;
+AbstractModel.whereAnd = (sqlKeyCondition) => {
+    const updatewhereAnd = sqlKeyCondition.map(type => `${type}=?`).join(', ');
+    return updatewhereAnd;
 };
 exports.default = AbstractModel;

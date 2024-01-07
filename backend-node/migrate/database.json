@@ -1,0 +1,35 @@
+{
+  "dev": {
+    "driver": "mysql",
+    "host": "localhost",
+    "user": "root",
+    "password": "",
+    "database": "datlichdulich",
+    "multipleStatements": true
+  },
+  "test": {
+    "driver": "sqlite3",
+    "filename": ":memory:"
+  },
+  "prod": {
+    "driver": "mysql",
+    "user": "root",
+    "password": ""
+  },
+  "pg": {
+    "driver": "pg",
+    "user": "test",
+    "password": "test",
+    "host": "localhost",
+    "database": "mydb",
+    "port": "20144",
+    "ssl": "true",
+    "schema": "my_schema"
+  },
+  "mongo": {
+    "driver": "mongodb",
+    "database": "my_db",
+    "host": "localhost"
+  },
+  "other": "postgres://uname:pw@server.com/dbname"
+}
